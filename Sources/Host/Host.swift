@@ -27,7 +27,7 @@ struct Host: AsyncParsableCommand {
 
         for url in processUrls {
             let nodeId = try await host.spawnSubprocessGuest(url: url)
-            let greeter = try _Greeter.resolve(
+            let greeter = try $Greeter.resolve(
                 id: PluginActorSystem.ActorID(nodeId: nodeId, localId: 0),
                 using: host
             )
@@ -35,7 +35,7 @@ struct Host: AsyncParsableCommand {
         }
         for url in wasmUrls {
             let nodeId = try await host.spawnWasmGuest(url: url)
-            let greeter = try _Greeter.resolve(
+            let greeter = try $Greeter.resolve(
                 id: PluginActorSystem.ActorID(nodeId: nodeId, localId: 0),
                 using: host
             )

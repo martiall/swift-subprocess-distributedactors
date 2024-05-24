@@ -8,8 +8,8 @@ Disclamer: this is mainly educational work to play with distributed actor system
 
 ## Pre-requirement
 
-Swift Toolchain `swift-6.0-DEVELOPMENT-SNAPSHOT-2024-04-14-a`
-Swift WASM Toolchain `swift-wasm-6.0-SNAPSHOT-2024-05-01-a`
+- Swift Toolchain `swift-DEVELOPMENT-SNAPSHOT-2024-05-15-a`
+- Swift WASM Toolchain `swift-wasm-6.0-SNAPSHOT-2024-05-01-a`
 
 ## Running the sample app
 
@@ -24,8 +24,8 @@ Should output the following:
 [Wasm] Bonjour Swift!
 ```
 
-Two first lines are the host calling distributed actors in the two children processes.
-Two last lines are the host calling distributed actors in the two WasmKit virtual machine.
+- Two first lines are the host calling distributed actors in the two children processes.
+- Two last lines are the host calling distributed actors in the two WasmKit virtual machine.
 
 ## Acknowledgement
 Lock implementation comes from https://github.com/apple/swift-distributed-actors which comes from https://github.com/apple/swift-nio

@@ -15,16 +15,15 @@ LoggingSystem.bootstrap { label in
     StreamLogHandler.standardError(label: label)
 }
 
-/*distributed*/ actor EnglishGreeter: Greeter {
-    /*distributed*/ func greet(name: String) -> String {
+distributed actor EnglishGreeter: Greeter {
+    distributed func greet(name: String) -> String {
         "[\(from)] Hello \(name)!"
     }
 }
 
-let builder: @Sendable (PluginActorSystem) -> [_Greeter] = {
+let builder: @Sendable (PluginActorSystem) -> [any Greeter] = {
     [
-        //EnglishGreeter(actorSystem: $0)
-        _Greeter(greeter: EnglishGreeter(), actorSystem: $0)
+        EnglishGreeter(actorSystem: $0)
     ]
 }
 #if os(WASI)

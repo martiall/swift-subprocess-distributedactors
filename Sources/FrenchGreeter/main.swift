@@ -16,23 +16,21 @@ LoggingSystem.bootstrap { label in
     StreamLogHandler.standardError(label: label)
 }
 
-/*distributed*/ actor FrenchGreeter: Greeter {
-    /*distributed*/ func greet(name: String) -> String {
+distributed actor FrenchGreeter: Greeter {
+    distributed func greet(name: String) -> String {
         "[\(from)] Bonjour \(name)!"
     }
 }
 
-/*distributed*/ actor ProuvencualGreeter: Greeter {
-    /*distributed*/ func greet(name: String) -> String {
+distributed actor ProuvencualGreeter: Greeter {
+    distributed func greet(name: String) -> String {
         "[\(from)] Bouan jou \(name)!"
     }
 }
-let builder: @Sendable (PluginActorSystem) -> [_Greeter] = {
+let builder: @Sendable (PluginActorSystem) -> [any Greeter] = {
     return [
-        //FrenchGreeter(actorSystem: $0),
-        //ProuvencualGreeter(actorSystem: $0)
-        _Greeter(greeter: FrenchGreeter(), actorSystem: $0),
-        _Greeter(greeter: ProuvencualGreeter(), actorSystem: $0)
+        FrenchGreeter(actorSystem: $0),
+        ProuvencualGreeter(actorSystem: $0)
     ]
 }
 
