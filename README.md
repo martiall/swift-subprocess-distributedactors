@@ -18,11 +18,14 @@ Swift WASM Toolchain `swift-wasm-6.0-SNAPSHOT-2024-05-01-a`
 Should output the following:
 
 ```
-Hello Swift!
-Bonjour Swift!
+[Subprocess] Hello Swift!
+[Subprocess] Bonjour Swift!
+[Wasm] Hello Swift!
+[Wasm] Bonjour Swift!
 ```
 
-Two lines are the host calling distributed actors in the two children processes.
+Two first lines are the host calling distributed actors in the two children processes.
+Two last lines are the host calling distributed actors in the two WasmKit virtual machine.
 
 ## Acknowledgement
 Lock implementation comes from https://github.com/apple/swift-distributed-actors which comes from https://github.com/apple/swift-nio
