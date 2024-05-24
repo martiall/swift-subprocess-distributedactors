@@ -1,7 +1,13 @@
 import Foundation
 import Greeter
 import Distributed
+#if os(WASI)
+import WasmKitDistributedActors
+let from = "Wasm"
+#else
+let from = "Subprocess"
 import SubprocessDistributedActors
+#endif
 import Logging
 
 typealias DefaultDistributedActorSystem = PluginActorSystem
@@ -12,13 +18,13 @@ LoggingSystem.bootstrap { label in
 
 /*distributed*/ actor FrenchGreeter: Greeter {
     /*distributed*/ func greet(name: String) -> String {
-        "Bonjour \(name)!"
+        "[\(from)] Bonjour \(name)!"
     }
 }
 
 /*distributed*/ actor ProuvencualGreeter: Greeter {
     /*distributed*/ func greet(name: String) -> String {
-        "Bouan jou \(name)!"
+        "[\(from)] Bouan jou \(name)!"
     }
 }
 let builder: @Sendable (PluginActorSystem) -> [_Greeter] = {
@@ -30,4 +36,8 @@ let builder: @Sendable (PluginActorSystem) -> [_Greeter] = {
     ]
 }
 
+#if os(WASI)
+try await PluginActorSystem.makeWasmKitGuest(builder)
+#else
 try await PluginActorSystem.makeSubprocessGuest(builder)
+#endif

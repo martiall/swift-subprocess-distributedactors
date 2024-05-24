@@ -38,6 +38,7 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-atomics.git", from: "1.2.0"),
         .package(url: "https://github.com/apple/swift-log.git", from: "1.5.3"),
         .package(url: "https://github.com/apple/swift-argument-parser", from: "1.3.1"),
+        .package(url: "https://github.com/swiftwasm/WasmKit.git", branch: "main"),
     ],
     targets: [
         .target(
@@ -57,11 +58,29 @@ let package = Package(
             ],
             swiftSettings: swift6Mode
         ),
+        .target(
+            name: "WasmKitDistributedActors",
+            dependencies: [
+                .product(name: "Logging", package: "swift-log"),
+                .target(name: "PluginDistributedActors"),
+                .target(name: "WasmKitDistributedActorsHostFunctions", condition: .when(platforms: [.wasi])),
+                .product(name: "WasmKit", package: "WasmKit", condition: .when(platforms: [.macOS])),
+                .product(name: "WasmKitWASI", package: "WasmKit", condition: .when(platforms: [.macOS])),
+                .product(name: "WASI", package: "WasmKit", condition: .when(platforms: [.macOS]))
+            ],
+            swiftSettings: swift6Mode
+        ),
+        .target(
+            name: "WasmKitDistributedActorsHostFunctions",
+            dependencies: [],
+            swiftSettings: swift6Mode
+        ),
         .executableTarget(
             name: "Host",
             dependencies: [
                 .product(name: "Logging", package: "swift-log"),
                 .target(name: "SubprocessDistributedActors"),
+                .target(name: "WasmKitDistributedActors"),
                 .target(name: "PluginDistributedActors"),
                 .target(name: "Greeter"),
                 .product(name: "ArgumentParser", package: "swift-argument-parser")
@@ -80,6 +99,7 @@ let package = Package(
             dependencies: [
                 .product(name: "Logging", package: "swift-log"),
                 .target(name: "SubprocessDistributedActors", condition: .when(platforms: [.macOS])),
+                .target(name: "WasmKitDistributedActors", condition: .when(platforms: [.wasi])),
                 .target(name: "Greeter")
             ],
             swiftSettings: swift6Mode
@@ -89,6 +109,7 @@ let package = Package(
             dependencies: [
                 .product(name: "Logging", package: "swift-log"),
                 .target(name: "SubprocessDistributedActors", condition: .when(platforms: [.macOS])),
+                .target(name: "WasmKitDistributedActors", condition: .when(platforms: [.wasi])),
                 .target(name: "Greeter")
             ],
             swiftSettings: swift6Mode

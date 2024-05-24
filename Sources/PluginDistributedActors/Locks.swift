@@ -11,7 +11,9 @@
 // SPDX-License-Identifier: Apache-2.0
 //
 //===----------------------------------------------------------------------===//
-#if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
+#if os(WASI)
+// Nothing
+#elseif os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
 import Darwin
 #else
 import Glibc
@@ -24,6 +26,11 @@ import Glibc
 /// one used by NIO.
 @available(*, noasync, message: "Locks are bad in async code; If you truly must, use DispatchSemaphore")
 public final class Lock {
+    #if os(WASI)
+    public init() { }
+    public func lock() { }
+    public func unlock() { }
+    #else
     fileprivate let mutex: UnsafeMutablePointer<pthread_mutex_t> = UnsafeMutablePointer.allocate(capacity: 1)
 
     /// Create a new lock.
@@ -61,6 +68,7 @@ public final class Lock {
         let err = pthread_mutex_unlock(self.mutex)
         precondition(err == 0, "\(#function) failed in pthread_mutex with error \(err)")
     }
+    #endif
 }
 
 extension Lock {

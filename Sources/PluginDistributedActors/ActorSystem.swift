@@ -1,5 +1,7 @@
 import Distributed
+#if !os(WASI)
 import Synchronization
+#endif
 import Logging
 import Foundation
 
@@ -13,8 +15,11 @@ public enum PluginActorSystemError: Error {
 public final class PluginActorSystem: DistributedActorSystem {
     internal let localNodeId: NodeID
     
+    #if !os(WASI)
     internal let nextLocalId: Atomic<Int> = .init(0)
-    
+    #else
+    internal var nextLocalId: Int = 0
+    #endif
     //TODO: To replace with Mutex when available
     struct WeakDistributedActor: Sendable {
         private(set) weak var inner: (any DistributedActor)?
@@ -84,7 +89,12 @@ extension PluginActorSystem {
     }
     
     public func assignID<Act: DistributedActor>(_ actorType: Act.Type) -> ActorID where ActorID == Act.ID {
+        #if !os(WASI)
         let nextID = self.nextLocalId.add(1, ordering: .acquiringAndReleasing).oldValue
+        #else
+        let nextID = self.nextLocalId
+        self.nextLocalId += 1
+        #endif
         let next = ActorID(
             nodeId: self.localNodeId,
             localId: nextID

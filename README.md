@@ -9,6 +9,7 @@ Disclamer: this is mainly educational work to play with distributed actor system
 ## Pre-requirement
 
 Swift Toolchain `swift-6.0-DEVELOPMENT-SNAPSHOT-2024-04-14-a`
+Swift WASM Toolchain `swift-wasm-6.0-SNAPSHOT-2024-05-01-a`
 
 ## Running the sample app
 
