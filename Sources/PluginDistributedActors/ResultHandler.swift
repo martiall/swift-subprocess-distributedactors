@@ -1,13 +1,13 @@
 import Distributed
 
-public struct SubprocessResultHandler: DistributedTargetInvocationResultHandler {
+public struct PluginResultHandler: DistributedTargetInvocationResultHandler {
     public typealias SerializationRequirement = any Codable
     
-    let system: SubprocessActorSystem
+    let system: PluginActorSystem
     let caller: NodeID
     let id: CallID
     
-    init(system: SubprocessActorSystem, caller: NodeID, as id: CallID) {
+    init(system: PluginActorSystem, caller: NodeID, as id: CallID) {
         self.system = system
         self.caller = caller
         self.id = id

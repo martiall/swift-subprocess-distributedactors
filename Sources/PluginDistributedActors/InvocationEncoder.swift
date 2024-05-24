@@ -1,12 +1,14 @@
 import Distributed
 import Foundation
 
-public struct SubprocessActorInvocationEncoder: DistributedTargetInvocationEncoder {
+public struct PluginActorInvocationEncoder: DistributedTargetInvocationEncoder {
     public typealias SerializationRequirement = any Codable
     let encoder = JSONEncoder()
     
     var generics: [String] = .init()
     var arguments: [[UInt8]] = .init()
+    var returnType: String? = nil
+    var errorType: String? = nil
     
     /// Record an argument of `Argument` type.
     /// This will be invoked for every argument of the target, in declaration order.
@@ -27,11 +29,11 @@ public struct SubprocessActorInvocationEncoder: DistributedTargetInvocationEncod
     }
 
     public mutating func recordReturnType<R: Codable>(_ type: R.Type) throws {
-        
+        self.returnType = _mangledTypeName(type)
     }
 
     public mutating func recordErrorType<E: Error>(_ type: E.Type) throws {
-        
+        self.errorType = _mangledTypeName(type)
     }
 
     public mutating func doneRecording() throws {

@@ -1,19 +1,33 @@
 import Foundation
-import SubprocessDistributedActors
 import Greeter
+import Distributed
+import SubprocessDistributedActors
+import Logging
 
-actor FrenchGreeter: Greeter {
-    func greet(name: String) async throws -> String {
+typealias DefaultDistributedActorSystem = PluginActorSystem
+
+LoggingSystem.bootstrap { label in
+    StreamLogHandler.standardError(label: label)
+}
+
+/*distributed*/ actor FrenchGreeter: Greeter {
+    /*distributed*/ func greet(name: String) -> String {
         "Bonjour \(name)!"
     }
 }
 
-let system = try await SubprocessActorSystem.makeGuest()
-
-let actor = _Greeter(greeter: FrenchGreeter(), system: system)
-
-while(!Task.isCancelled) {
-    withExtendedLifetime(system, {})
-    withExtendedLifetime(actor, {})
-    try await Task.sleep(for: .seconds(1))
+/*distributed*/ actor ProuvencualGreeter: Greeter {
+    /*distributed*/ func greet(name: String) -> String {
+        "Bouan jou \(name)!"
+    }
 }
+let builder: @Sendable (PluginActorSystem) -> [_Greeter] = {
+    return [
+        //FrenchGreeter(actorSystem: $0),
+        //ProuvencualGreeter(actorSystem: $0)
+        _Greeter(greeter: FrenchGreeter(), actorSystem: $0),
+        _Greeter(greeter: ProuvencualGreeter(), actorSystem: $0)
+    ]
+}
+
+try await PluginActorSystem.makeSubprocessGuest(builder)

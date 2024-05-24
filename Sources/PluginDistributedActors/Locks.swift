@@ -11,7 +11,6 @@
 // SPDX-License-Identifier: Apache-2.0
 //
 //===----------------------------------------------------------------------===//
-
 #if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
 import Darwin
 #else

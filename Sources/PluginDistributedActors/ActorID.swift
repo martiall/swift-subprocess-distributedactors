@@ -1,9 +1,8 @@
 import Distributed
-import Foundation
 
-public typealias NodeID = Int32
+public typealias NodeID = String
 
-public struct SubprocessActorID: Hashable, Codable, Sendable {
+public struct PluginActorID: Hashable, Codable, Sendable {
     internal let nodeId: NodeID
     private let localId: Int
     

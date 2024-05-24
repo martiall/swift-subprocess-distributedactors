@@ -6,23 +6,22 @@ Only implement the most basic features on the Distributed Actor System.
 
 Disclamer: this is mainly educational work to play with distributed actor system.
 
+## Pre-requirement
+
+Swift Toolchain `swift-6.0-DEVELOPMENT-SNAPSHOT-2024-04-14-a`
+
 ## Running the sample app
 
-1. In the root folder call `swift build`
-2. Run the host application `swift run Host`
-
-The Host will look for two executable in `.build/debug/` and load them.
+1. In the root folder launch `./build_and_test.sh`. It will build the plugins and launch the host.
 
 Should output the following:
 
 ```
 Hello Swift!
 Bonjour Swift!
-["Hello Swifty!", "Bonjour Swifty!"]
 ```
 
-First two lines are the host calling distributed actors in the two children processes.
-Last line in the first child calling itself and the other child.
+Two lines are the host calling distributed actors in the two children processes.
 
 ## Acknowledgement
 Lock implementation comes from https://github.com/apple/swift-distributed-actors which comes from https://github.com/apple/swift-nio

@@ -1,17 +1,17 @@
 import Distributed
 import Foundation
 
-public struct SubprocessActorInvocationDecoder: DistributedTargetInvocationDecoder {
+public struct PluginActorInvocationDecoder: DistributedTargetInvocationDecoder {
     public typealias SerializationRequirement = any Codable
     
     private let decoder: JSONDecoder = .init()
+    private let call: Message.Call
+    private var argumentsIterator: IndexingIterator<[[UInt8]]>
     
-    var argumentsIterator: [[UInt8]].Iterator
-    let generics: [String]
-    
-    init(argumentsIterator: [[UInt8]].Iterator, generics: [String]) {
-        self.argumentsIterator = argumentsIterator
-        self.generics = generics
+    init(actorSystem: any DistributedActorSystem, call: Message.Call) {
+        self.argumentsIterator = call.arguments.makeIterator()
+        self.call = call
+        self.decoder.userInfo[.actorSystemKey] = actorSystem
     }
     
     /// Ad-hoc protocol requirement
@@ -38,7 +38,7 @@ public struct SubprocessActorInvocationDecoder: DistributedTargetInvocationDecod
     
 
     public mutating func decodeGenericSubstitutions() throws -> [Any.Type] {
-        generics.compactMap({ _typeByName($0) })
+        self.call.generics.compactMap({ _typeByName($0) })
     }
 
     /// Decode the specific error type that the distributed invocation target has recorded.
@@ -46,7 +46,8 @@ public struct SubprocessActorInvocationDecoder: DistributedTargetInvocationDecod
     ///
     /// If the target known to not be throwing, or no error type was recorded, the method should return `nil`.
     public mutating func decodeErrorType() throws -> (Any.Type)? {
-        return nil
+        guard let errorTypeMangled = self.call.errorType else { return nil }
+        return _typeByName(errorTypeMangled)
     }
 
     /// Attempt to decode the known return type of the distributed invocation.
@@ -54,6 +55,7 @@ public struct SubprocessActorInvocationDecoder: DistributedTargetInvocationDecod
     /// It is legal to implement this by returning `nil`, and then the system
     /// will take the concrete return type from the located function signature.
     public mutating func decodeReturnType() throws -> (Any.Type)? {
-        return nil
+        guard let returnTypeMangled = self.call.returnType else { return nil }
+        return _typeByName(returnTypeMangled)
     }
 }
